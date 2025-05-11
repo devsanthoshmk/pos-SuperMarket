@@ -2,5 +2,6 @@
 	"base_tax" : 0,
 	"tax_on_every"  : false,
 	"inventory_direct" : "pos-for-teashop/data/inventory.csv",
-	"sales_direct" : "pos-for-teashop/data/sales.csv"
+	"sales_direct" : "pos-for-teashop/data/sales.csv",
+	"ask_customer_details" : false
 }

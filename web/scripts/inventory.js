@@ -1,10 +1,13 @@
-function showToast(message, duration = 3000) {
+function showToast(message,duration = 3000,danger=false) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
   // Pass duration to CSS animation (for fadeOut delay)
   toast.style.setProperty('--duration', duration + 'ms');
+  if (danger===true){
+    toast.style.backgroundColor = "var(--danger)";
+  }
 
   container.appendChild(toast);
 

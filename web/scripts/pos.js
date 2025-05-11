@@ -198,6 +198,12 @@ function updateDateTime(from) {
 //print handling
 function printHandle(){
   if (tot > 1) {
+
+        if (askDetailsCheckbox.checked===true && !(name.length>=0 && phone.length===10)){
+          showToast("Add costomer details or uncheck 'Ask Customer Details' to update bill without costomer deatils.",8000,true)
+          return
+        }
+
         window.print();
         //changing clear confirm overlay to clear after print
           cancelbtn.textContent='Bill Print Failed!';
@@ -212,7 +218,7 @@ function printHandle(){
 
           
       } else {
-        alert('Please add items to PRINT BILL');
+        showToast('Please add items to PRINT BILL',3000,true);
       }        
 }
   function handleSuccess(){
@@ -220,6 +226,7 @@ function printHandle(){
     const subtotal = sale.at(-1).subtotal
     const tax = sale.at(-1).tax
     const grandtotal = sale.at(-1).total
+
     sale.forEach((sal)=>{
       sal.id=parseInt(sales.at(-1).id,10)+1
       const [ date, time ] = getDateTime();
@@ -229,6 +236,9 @@ function printHandle(){
       sal.subtotal=subtotal;
       sal.tax=tax;
       sal.grandtotal=grandtotal;
+            // costomer details
+      sal.name = name;
+      sal.phone = phone;
     });
 
     // sending items to python to update inventory and sales
@@ -309,6 +319,70 @@ function renderMenu(){
   }
 }
 
+function askDetails(resolve){
+  
+}
+
+
+function customer_detail_menu() {
+  const header = costumer_container.querySelector('.dropdown-header');
+  const content = costumer_container.querySelector('.dropdown-content');
+  const icon = costumer_container.querySelector('.dropdown-icon');
+  const nameInput = costumer_container.querySelector('#customerName');
+  const phoneInput = costumer_container.querySelector('#customerPhone');
+
+  costumer_container.style.display= 'block'; 
+
+  // toggle dropdown content
+  let isExpanded = false;
+  header.addEventListener('click', () => {
+    isExpanded = !isExpanded;
+    content.style.display = isExpanded ? 'block' : 'none';
+    icon.textContent = isExpanded ? '▼' : '►';
+  });
+
+  // phone-only, max-10 digits
+  phoneInput.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
+
+  // blur logging
+  nameInput.addEventListener('blur', (el)=>{
+    if (el.target.value.length < 3) {
+      alert('Name must be at least 3 characters long.');
+    } else {
+      console.log('Name:', el.target.value);
+      name = el.target.value
+    }
+  });
+  phoneInput.addEventListener('blur',  (el)=>{
+    if ((parseInt(el.target.value,10)+"").length !== 10) {
+      alert('Phone must contain only numbers without +91.');
+    } else {
+      console.log('Name:', parseInt(el.target.value.length,10));
+      phone = el.target.value
+    }
+  });
+
+  // initialize visibility on load
+  costumer_container.style.display = askDetailsCheckbox.checked ? 'block' : 'none';
+}
+
+
+function callback_ask_details() {
+  if (askDetailsCheckbox.checked) {
+      customer_detail_menu();
+      // Code to show customer details form or modal
+      console.log('Ask details checkbox checked - add your functionality here');
+      // You can trigger a modal or expand a form section here
+  } else {
+      costumer_container.style.display = 'none'; // Hide the customer details form or modal
+      // Code to hide customer details form or modal
+      console.log('Ask details checkbox unchecked');
+  }
+}
+
+
 
   // MAIN FUNC CALLED AS ROOT
   let items;
@@ -354,7 +428,15 @@ function renderMenu(){
       renderMenu();
 
       // Call this function after renderMenu() in your existing code
-addSearchFunctionality();
+      addSearchFunctionality();
+
+      costumer_container = document.querySelector('#customer-details-container');
+
+
+      askDetailsCheckbox = document.getElementById('askDetailsCheckbox');
+      askDetailsCheckbox.checked = settings.ask_customer_details;
+      callback_ask_details()
+      askDetailsCheckbox.addEventListener('change', callback_ask_details);
 
 
       // showing availability

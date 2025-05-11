@@ -9,9 +9,45 @@
         
         <div class="bill-section">
             <div id="date-time" class="date-time">Loading...</div>
-            <h2><span class="print-hide">Current </span>Bill</h2>
+            <div class="bill-header">
+                <h2><span class="print-hide">Current </span>Bill</h2>
+                <div class="ask-details-container print-hide">
+                    <input type="checkbox" id="askDetailsCheckbox" class="ask-details-checkbox">
+                    <label for="askDetailsCheckbox">Ask Customer Details</label>
+                </div>
+            </div>
             
-            <div class="table-wrap">
+            <div id="customer-details-container" class="customer-details-container" style="display: none;">
+                <div class="dropdown-header">
+                <span class="dropdown-title">Customer Details</span>
+                <span class="dropdown-icon">►</span>
+                </div>
+                <div class="dropdown-content" style="display: none;">
+                <div class="input-scroll-container">
+                    <div class="input-group">
+                    <label for="customerName">NAME:</label>
+                    <input
+                        type="text"
+                        id="customerName"
+                        class="customer-input"
+                        placeholder="Enter name"
+                    />
+                    </div>
+                    <div class="input-group">
+                    <label for="customerPhone">PHONE:</label>
+                    <input
+                        type="tel"
+                        id="customerPhone"
+                        class="customer-input"
+                        placeholder="Enter number"
+                    />
+                    </div>
+                </div>
+                </div>
+            </div>
+
+              <div class="table-wrap">
+  
               <table class="bill-table">
                   <thead>
                       <tr>
@@ -20,7 +56,7 @@
                           <th>Price(₹)</th>
                           <th>Offer(₹)</th>
                           <th>Total(₹)</th>
-                          <th class="print-hide" style="width:40px; pointer-events: pointer;" onclick="clearbill()"><b>×</b></th> <!-- Compact column header -->
+                          <th class="print-hide" style="width:40px; pointer-events: pointer;" onclick="clearbill()"><b>X</b></th> <!-- Compact column header -->
 
                       </tr>
                   </thead>

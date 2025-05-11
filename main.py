@@ -1,4 +1,3 @@
-# import pandas as pd
 import eel
 import csv
 import json
@@ -6,8 +5,46 @@ import os
 import platform
 import subprocess
 import io
+import builtins
+import sys
+
+# keep reference to the real open
+_original_open = builtins.open
+
+
+def resource_path(relative_path: str) -> str:
+    """
+    Returns the absolute path to a resource, whether we're running
+    in a PyInstaller bundle or in normal script mode.
+    """
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
+def custom_open(file, mode="r", *args, **kwargs):
+    """
+    If `file` is a relative path and there *is* a bundled resource
+    at resource_path(file), redirect to that. Otherwise leave it alone.
+    """
+    # only consider relative paths
+    if not os.path.isabs(file):
+        bundled = resource_path(file)
+        # rewrite *only* if the bundled copy actually exists
+        if os.path.exists(bundled):
+            file = bundled
+    # delegate to the real open()
+    return _original_open(file, mode, *args, **kwargs)
+
+
+# install our override
+builtins.open = custom_open
+
 
 inventory_path = "data/inventory.csv"
+sales_path = "data/sales.csv"
 settings_path = "data/settings.json"
 
 
@@ -18,7 +55,9 @@ eel.init("web")
 @eel.expose
 def serve(html, web="True"):
     web = "data/" if web == "False" else "web/"
-    with open(f"{web}{html}" + (".html" if web == "web/" else ""), "r", encoding="utf-8") as f:
+    with open(
+        f"{web}{html}" + (".html" if web == "web/" else ""), "r", encoding="utf-8"
+    ) as f:
         content = f.read()
         return content
 
@@ -162,10 +201,10 @@ def setSettings(settings):
         json.dump(settings, file)
 
 
-# Start the app with an HTML file
 eel.start(
     "index.html",
-    mode="default",
-    cmdline_args=["--app", "--start-fullscreen", "--browser-startup-dialog"],
-    port=1234,
+    cmdline_args=[
+        "--start-maximized",
+        "--disable-infobars",
+    ],
 )

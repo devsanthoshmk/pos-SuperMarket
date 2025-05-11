@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing System - Bills Tab</title>
+
+    <style>
+    /* Inherit all styles from the original POS system */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f5f5f5;
+        padding: 4px;
+    }
+
+    /* Bills Section Styling */
+    .bills-container {
+        max-width: 80vw;
+        margin: auto;
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        height: 97vh;
+        overflow: auto;
+    }
+
+    .bills-header {
+        color: #5b3e29;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e6ccb3;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .bills-header h2 {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .save-all-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .save-all-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    /* Search Section */
+    .search-section {
+        margin-bottom: 20px;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        background-color: #f9f3ed;
+        border: 1px solid #e6ccb3;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-bottom: 15px;
+        width: 100%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 16px;
+        padding: 8px;
+        outline: none;
+        color: #5b3e29;
+    }
+
+    .search-input::placeholder {
+        color: #8c6e5a;
+    }
+
+    .search-icon {
+        margin-right: 8px;
+        color: #5b3e29;
+        font-size: 18px;
+    }
+
+    .search-options {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .search-option {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-option input {
+        margin-right: 5px;
+        accent-color: #5b3e29;
+    }
+
+    /* Dropdown Sections */
+    .dropdown-section {
+        background-color: #f9f3ed;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #e6ccb3;
+        overflow: hidden;
+    }
+
+    .dropdown-header {
+        background-color: #e6ccb3;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .dropdown-header:hover {
+        background-color: #d9b99d;
+    }
+
+    .dropdown-title {
+        color: #5b3e29;
+        font-weight: 600;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+    .dropdown-icon {
+        color: #5b3e29;
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+
+    .dropdown-icon.open {
+        transform: rotate(90deg);
+    }
+
+    .dropdown-content {
+        padding: 15px;
+        display: none;
+    }
+
+    .dropdown-content.open {
+        display: block;
+    }
+
+    /* Sort Options */
+    .sort-options {
+        display: flex;
+        align-items: center;
+        margin-left: 15px;
+    }
+
+    .sort-text {
+        font-size: 14px;
+        color: #5b3e29;
+        margin-right: 8px;
+    }
+
+    .sort-select {
+        padding: 5px 8px;
+        border: 1px solid #d9b99d;
+        border-radius: 5px;
+        color: #5b3e29;
+        background-color: white;
+        font-size: 14px;
+    }
+
+    .info-icon {
+        margin-left: 5px;
+        background-color: #5b3e29;
+        color: white;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: help;
+        position: relative;
+    }
+
+    .info-icon .tooltip {
+        visibility: hidden;
+        width: 200px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-weight: normal;
+        font-size: 12px;
+    }
+
+    .info-icon:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* Bills Grid */
+    .bills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(calc(50% - 10px), 1fr));
+        gap: 20px;
+    }
+
+    .bill-card {
+        background-color: white;
+        border: 1px solid #e6ccb3;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .bill-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .bill-header {
+        background-color: #f9f3ed;
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e6ccb3;
+    }
+
+    .bill-id {
+        font-weight: bold;
+        color: #5b3e29;
+    }
+
+    .bill-date {
+        color: #8c6e5a;
+        font-size: 14px;
+    }
+
+    .bill-customer {
+        padding: 12px 15px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e6ccb3;
+    }
+
+    .customer-name {
+        font-weight: 500;
+    }
+
+    .customer-phone {
+        color: #8c6e5a;
+    }
+
+    .bill-items {
+        padding: 0 15px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .bill-items table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .bill-items th,
+    .bill-items td {
+        padding: 8px 5px;
+        text-align: left;
+        font-size: 14px;
+        border-bottom: 1px solid #e6ccb3;
+    }
+
+    .bill-items th {
+        color: #5b3e29;
+        font-weight: 600;
+    }
+
+    .bill-items input {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #e6ccb3;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .bill-items input:focus {
+        outline: none;
+        border-color: #5b3e29;
+    }
+
+    .bill-summary {
+        padding: 12px 15px;
+        background-color: #f9f3ed;
+        border-top: 1px solid #e6ccb3;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .summary-row.total {
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #e6ccb3;
+    }
+
+    .bill-actions {
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px 15px;
+        background-color: #f9f3ed;
+    }
+
+    .save-btn {
+        background-color: #4caf50;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .save-btn:hover {
+        background-color: #3d8b40;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1200px) {
+        .bills-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .bills-container {
+            max-width: 95vw;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .bills-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .bills-container {
+            height: auto;
+            max-width: 100%;
+        }
+
+        .search-options {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dropdown-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sort-options {
+            margin-left: 0;
+            margin-top: 10px;
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .download-menu {
+        position: relative;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .download-btn {
+        background-color: #4a6da7;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .download-btn:hover {
+        background-color: #3a5a8a;
+    }
+
+    .download-options {
+        display: none;
+        position: absolute;
+        right: 0;
+        min-width: 120px;
+        background-color: white;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .download-menu:hover .download-options {
+        display: block;
+    }
+
+    .download-option {
+        color: #5b3e29;
+        padding: 10px 15px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+        transition: background-color 0.3s;
+    }
+
+    .download-option:hover {
+        background-color: #f9f3ed;
+    }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">Super Market
+            <div class="tagline">Fresh. Fast. Affordable</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a id="1" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="2" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    POS
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="3" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    Inventory
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="5" class="nav-link active" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Bills
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="4" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div id="main" class="main-content">
+        <div class="bills-container">
+            <div class="bills-header">
+                <h2>Bills</h2>
+                <button id="saveAllBtn" class="save-all-btn">Save All</button>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="billSearch" class="search-input" placeholder="Search bills...">
+                </div>
+                <div class="search-options">
+                    <div class="search-option">
+                        <input type="radio" id="searchByName" name="searchOption" value="name" checked>
+                        <label for="searchByName">Search by Name</label>
+                    </div>
+                    <div class="search-option">
+                        <input type="radio" id="searchByPhone" name="searchOption" value="phone">
+                        <label for="searchByPhone">Search by Phone</label>
+                    </div>
+                    <div class="search-option">
+                        <input type="radio" id="searchById" name="searchOption" value="id">
+                        <label for="searchById">Search by Bill ID</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Results Section (Initially Hidden) -->
+            <div id="searchResultsSection" class="dropdown-section" style="display: none;">
+                <div class="dropdown-header" id="searchResultsHeader">
+                    <div class="dropdown-title">Search Results</div>
+                    <span class="dropdown-icon">►</span>
+                </div>
+                <div class="dropdown-content" id="searchResultsContent">
+                    <div id="searchResultsGrid" class="bills-grid">
+                        <!-- Search results will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bills Section -->
+            <div class="dropdown-section">
+                <div class="dropdown-header" id="recentBillsHeader">
+                    <div class="dropdown-title">
+                        Recent Bills
+                        <div class="sort-options">
+                            <span class="sort-text">Sort by:</span>
+                            <select id="sortSelect" class="sort-select">
+                                <option value="date">Date</option>
+                                <option value="id">ID 
+                                </option>
+                                <option value="total">Total Price</option>
+                            </select>
+                            <span class="info-icon" id="sortInfoIcon">i
+                                <span class="tooltip">Sort bills by date, ID number, or total price</span>
+                            </span>
+                        </div>
+                    </div>
+                    <span class="dropdown-icon">►</span>
+                </div>
+                <div class="dropdown-content" id="recentBillsContent">
+                    <div id="recentBillsGrid" class="bills-grid">
+                        <!-- Recent bills will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample bill data
+        const billsData = [
+            {
+                id: "23",
+                name: "Heidi",
+                phone: "123-456-0023",
+                date: "02-05-2025",
+                time: "23:56",
+                items: [
+                    { name: "Puffs", quantity: 1, price: 20, total: 20 },
+                    { name: "Milk", quantity: 3, price: 15, total: 45 },
+                    { name: "Coffee", quantity: 2, price: 20, total: 40 },
+                    { name: "Samosa", quantity: 1, price: 20, total: 20 }
+                ],
+                subtotal: 125,
+                tax: 6.50,
+                grandtotal: 131.50
+            },
+            {
+                id: "22",
+                name: "Grace",
+                phone: "123-456-0022",
+                date: "22-09-2025",
+                time: "13:40",
+                items: [
+                    { name: "Special Tea", quantity: 2, price: 25, total: 50 }
+                ],
+                subtotal: 50,
+                tax: 9,
+                grandtotal: 59
+            },
+            {
+                id: "21",
+                name: "Frank",
+                phone: "123-456-0021",
+                date: "22-04-2025",
+                time: "13:40",
+                items: [
+                    { name: "Special Tea", quantity: 2, price: 25, total: 50 }
+                ],
+                subtotal: 50,
+                tax: 9,
+                grandtotal: 59
+            },
+            {
+                id: "1",
+                name: "Alice",
+                phone: "123-456-0001",
+                date: "28-04-2025",
+                time: "15:16",
+                items: [
+                    { name: "Special Tea", quantity: 1, price: 25, total: 25 }
+                ],
+                subtotal: 25,
+                tax: 6.5,
+                grandtotal: 31.5
+            },
+            {
+                id: "2",
+                name: "Bob",
+                phone: "123-456-0002",
+                date: "28-04-2025",
+                time: "15:16",
+                items: [
+                    { name: "Samosa", quantity: 1, price: 20, total: 20 }
+                ],
+                subtotal: 20,
+                tax: 6.5,
+                grandtotal: 26.5
+            },
+            {
+                id: "3",
+                name: "Charlie",
+                phone: "123-456-0003",
+                date: "28-04-2025",
+                time: "15:16",
+                items: [
+                    { name: "Puffs", quantity: 2, price: 20, total: 40 }
+                ],
+                subtotal: 40,
+                tax: 6.5,
+                grandtotal: 46.5
+            }
+        ];
+
+        // DOM elements
+        const recentBillsHeader = document.getElementById('recentBillsHeader');
+        const recentBillsContent = document.getElementById('recentBillsContent');
+        const recentBillsGrid = document.getElementById('recentBillsGrid');
+        const searchResultsSection = document.getElementById('searchResultsSection');
+        const searchResultsHeader = document.getElementById('searchResultsHeader');
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        const searchResultsGrid = document.getElementById('searchResultsGrid');
+        const billSearch = document.getElementById('billSearch');
+        const sortSelect = document.getElementById('sortSelect');
+        const saveAllBtn = document.getElementById('saveAllBtn');
+
+        // Function to toggle dropdown sections
+        function toggleDropdown(header, content) {
+            const icon = header.querySelector('.dropdown-icon');
+            
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.textContent = '►';
+                icon.classList.remove('open');
+            } else {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+                icon.classList.add('open');
+            }
+        }
+
+        // Add event listeners for dropdowns
+        recentBillsHeader.addEventListener('click', () => toggleDropdown(recentBillsHeader, recentBillsContent));
+        searchResultsHeader.addEventListener('click', () => toggleDropdown(searchResultsHeader, searchResultsContent));
+
+        // Function to create a bill card
+        function createBillCard(bill) {
+            const card = document.createElement('div');
+            card.className = 'bill-card fade-in';
+            card.dataset.billId = bill.id;
+
+            const header = document.createElement('div');
+            header.className = 'bill-header';
+            header.innerHTML = `
+                <span class="bill-id">Bill #${bill.id}</span>
+                <span class="bill-date">${bill.date} ${bill.time}</span>
+            `;
+
+            const customer = document.createElement('div');
+            customer.className = 'bill-customer';
+            customer.innerHTML = `
+                <input type="text" class="customer-name" value="${bill.name}" data-field="name">
+                <input type="text" class="customer-phone" value="${bill.phone}" data-field="phone">
+            `;
+
+            const itemsContainer = document.createElement('div');
+            itemsContainer.className = 'bill-items';
+
+            const itemsTable = document.createElement('table');
+            itemsTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            `;
+
+            const tbody = itemsTable.querySelector('tbody');
+            bill.items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" value="${item.name}" data-field="items[${index}].name"></td>
+                    <td><input type="number" value="${item.quantity}" min="1" data-field="items[${index}].quantity"></td>
+                    <td><input type="number" value="${item.price}" min="0" data-field="items[${index}].price"></td>
+                    <td>₹${item.total.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            itemsContainer.appendChild(itemsTable);
+
+            const summary = document.createElement('div');
+            summary.className = 'bill-summary';
+            summary.innerHTML = `
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>₹${bill.subtotal.toFixed(2)}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax:</span>
+                    <span>₹${bill.tax.toFixed(2)}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span>₹${bill.grandtotal.toFixed(2)}</span>
+                </div>
+            `;
+
+            const actions = document.createElement('div');
+            actions.className = 'bill-actions';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'save-btn';
+            saveBtn.textContent = 'Save';
+            saveBtn.addEventListener('click', () => saveBill(bill.id));
+
+            const downloadMenu = document.createElement('div');
+            downloadMenu.className = 'download-menu';
+            downloadMenu.innerHTML = `
+                <button class="download-btn">Download</button>
+                <div class="download-options">
+                    <a href="#" class="download-option" onclick="downloadBill('${bill.id}', 'pdf')">PDF</a>
+                    <a href="#" class="download-option" onclick="downloadBill('${bill.id}', 'text')">Text</a>
+                </div>
+            `;
+
+            actions.appendChild(saveBtn);
+            actions.appendChild(downloadMenu);
+
+            card.appendChild(header);
+            card.appendChild(customer);
+            card.appendChild(itemsContainer);
+            card.appendChild(summary);
+            card.appendChild(actions);
+
+            // Add event listeners for input changes
+            const inputs = card.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    updateBillData(bill.id, input.dataset.field, input.value);
+                });
+            });
+
+            return card;
+        }
+
+        // Function to update bill data when inputs change
+        function updateBillData(billId, field, value) {
+            const bill = billsData.find(b => b.id === billId);
+            if (!bill) return;
+
+            // Handle nested properties like items[0].name
+            if (field.includes('[')) {
+                const [arrayName, rest] = field.split('[');
+                const index = parseInt(rest.split(']')[0]);
+                const propName = rest.split('.')[1];
+                
+                if (arrayName === 'items') {
+                    // Convert value to appropriate type
+                    let typedValue = value;
+                    if (propName === 'quantity') typedValue = parseInt(value);
+                    if (propName === 'price') typedValue = parseFloat(value);
+                    
+                    bill.items[index][propName] = typedValue;
+                    
+                    // Update total for this item
+                    if (propName === 'quantity' || propName === 'price') {
+                        bill.items[index].total = bill.items[index].quantity * bill.items[index].price;
+                        
+                        // Recalculate subtotal and grandtotal
+                        bill.subtotal = bill.items.reduce((sum, item) => sum + item.total, 0);
+                        bill.grandtotal = bill.subtotal + bill.tax;
+                        
+                        // Update the UI for this card
+                        const card = document.querySelector(`.bill-card[data-bill-id="${billId}"]`);
+                        const totalCell = card.querySelector(`input[data-field="${field}"]`).closest('tr').querySelector('td:last-child');
+                        totalCell.textContent = `₹${bill.items[index].total.toFixed(2)}`;
+                        
+                        // Update summary
+                        const summary = card.querySelector('.bill-summary');
+                        summary.innerHTML = `
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span>₹${bill.subtotal.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax:</span>
+                                <span>₹${bill.tax.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total:</span>
+
+
+
+
+// here code was cut off
+
+                        // your code
+// Function to save an individual bill
+function saveBill(billId) {
+    const bill = billsData.find(b => b.id === billId);
+    if (!bill) return;
+    
+    // Show success message
+    alert(`Bill #${billId} saved successfully!`);
+    
+    // In a real application, you would send this data to a server
+    console.log("Saving bill:", bill);
+}
+
+// Function to handle the "Save All" button
+saveAllBtn.addEventListener('click', () => {
+    // In a real app, you would save all bills to the server
+    alert('All changes saved successfully!');
+    console.log("Saving all bills:", billsData);
+});
+
+// Function to download a bill as PDF or text
+function downloadBill(billId, format) {
+    const bill = billsData.find(b => b.id === billId);
+    if (!bill) return;
+    
+    if (format === 'pdf') {
+        // In a real application, you would generate a PDF
+        alert(`Generating PDF for Bill #${billId}...\nThis would create a PDF in a real application.`);
+    } else if (format === 'text') {
+        // Create a text representation of the bill
+        let content = `BILL #${bill.id}\n`;
+        content += `Date: ${bill.date} ${bill.time}\n`;
+        content += `Customer: ${bill.name}\n`;
+        content += `Phone: ${bill.phone}\n\n`;
+        content += `ITEMS:\n`;
+        content += `${'Item'.padEnd(20)} ${'Qty'.padEnd(5)} ${'Price'.padEnd(10)} ${'Total'.padEnd(10)}\n`;
+        content += `${'-'.repeat(50)}\n`;
+        
+        bill.items.forEach(item => {
+            content += `${item.name.padEnd(20)} ${item.quantity.toString().padEnd(5)} ₹${item.price.toFixed(2).padEnd(10)} ₹${item.total.toFixed(2).padEnd(10)}\n`;
+        });
+        
+        content += `${'-'.repeat(50)}\n`;
+        content += `${'Subtotal:'.padEnd(35)} ₹${bill.subtotal.toFixed(2)}\n`;
+        content += `${'Tax:'.padEnd(35)} ₹${bill.tax.toFixed(2)}\n`;
+        content += `${'TOTAL:'.padEnd(35)} ₹${bill.grandtotal.toFixed(2)}\n`;
+        
+        // Create a download link
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+        element.setAttribute('download', `Bill_${billId}.txt`);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+}
+
+// Function to search bills
+function searchBills() {
+    const searchTerm = billSearch.value.toLowerCase().trim();
+    const searchOption = document.querySelector('input[name="searchOption"]:checked').value;
+    
+    if (!searchTerm) {
+        searchResultsSection.style.display = 'none';
+        return;
+    }
+    
+    // Clear previous search results
+    searchResultsGrid.innerHTML = '';
+    
+    // Filter bills based on search criteria
+    const filteredBills = billsData.filter(bill => {
+        if (searchOption === 'name') {
+            return bill.name.toLowerCase().includes(searchTerm);
+        } else if (searchOption === 'phone') {
+            return bill.phone.includes(searchTerm);
+        } else if (searchOption === 'id') {
+            return bill.id.includes(searchTerm);
+        }
+        return false;
+    });
+    
+    // Show or hide search results section
+    if (filteredBills.length > 0) {
+        filteredBills.forEach(bill => {
+            searchResultsGrid.appendChild(createBillCard(bill));
+        });
+        searchResultsSection.style.display = 'block';
+        
+        // Open the dropdown if it's closed
+        const icon = searchResultsHeader.querySelector('.dropdown-icon');
+        searchResultsContent.style.display = 'block';
+        icon.textContent = '▼';
+        icon.classList.add('open');
+    } else {
+        searchResultsGrid.innerHTML = '<div style="padding: 20px; text-align: center; width: 100%;">No results found</div>';
+        searchResultsSection.style.display = 'block';
+    }
+}
+
+// Add event listener for search input
+billSearch.addEventListener('input', searchBills);
+document.querySelectorAll('input[name="searchOption"]').forEach(radio => {
+    radio.addEventListener('change', searchBills);
+});
+
+// Function to sort bills
+function sortBills() {
+    const sortOption = sortSelect.value;
+    
+    billsData.sort((a, b) => {
+        if (sortOption === 'date') {
+            // Sort by date (assuming format is DD-MM-YYYY)
+            const [dayA, monthA, yearA] = a.date.split('-');
+            const [dayB, monthB, yearB] = b.date.split('-');
+            
+            // Convert to YYYY-MM-DD format for proper comparison
+            const dateA = new Date(`${yearA}-${monthA}-${dayA} ${a.time}`);
+            const dateB = new Date(`${yearB}-${monthB}-${dayB} ${b.time}`);
+            
+            return dateB - dateA; // Most recent first
+        } else if (sortOption === 'id') {
+            // Sort by ID (assuming numeric or alphanumeric)
+            return parseInt(b.id) - parseInt(a.id); // Highest ID first
+        } else if (sortOption === 'total') {
+            // Sort by grand total
+            return b.grandtotal - a.grandtotal; // Highest amount first
+        }
+        return 0;
+    });
+    
+    // Re-render bills
+    displayBills();
+}
+
+// Function to display bills in the grid
+function displayBills() {
+    recentBillsGrid.innerHTML = '';
+    
+    billsData.forEach(bill => {
+        recentBillsGrid.appendChild(createBillCard(bill));
+    });
+}
+
+// Call the sort function when the sort option changes
+sortSelect.addEventListener('change', sortBills);
+
+// Initialize the bills display
+displayBills();
+
+// Open recent bills section by default when the page loads
+toggleDropdown(recentBillsHeader, recentBillsContent);

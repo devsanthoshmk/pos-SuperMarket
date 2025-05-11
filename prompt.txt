@@ -1,0 +1,1191 @@
+i'll give you my pos html css code 
+
+    i need to create a table just like dashboad, inventory, settings and pos itself i need to create Bills tab where users can see a search label first and below it there should be Recent bills label which is a dropdown
+
+    that recent bill label show have sort dropdown which should have date, id(here add a info btn near with dummy text on hover), total price also give me js for these..
+
+    first i need you to show the recent bills like it show in print option(refer print css given below) two bills in a row which should be editable and just console.log the changes add a save button in that bill show section and in top(Save All) when clicked log the whole data. Example of a data i have is give bellow just hardcode this into js and paputate a editable bill section
+      example data(which is used for creating bill and editing it):
+        id,name,phone,date,time,item,quantity,price,total,subtotal,tax,grandtotal
+        1,Alice,123-456-0001,28-04-2025,15:16,Special Tea,1,25,25,105,6.5,111.5
+        2,Bob,123-456-0002,28-04-2025,15:16,Samosa,1,20,20,105,6.5,111.5
+        3,Charlie,123-456-0003,28-04-2025,15:16,Puffs,2,20,40,105,6.5,111.5
+        4,David,123-456-0004,27-04-2025,10:22,Coffee,2,20,40,95,5.7,100.7
+        5,Eve,123-456-0005,27-04-2025,10:22,Puffs,1,20,20,95,5.7,100.7
+        21,Frank,123-456-0021,22-04-2025,13:40,Special Tea,2,25,50,150,9,159
+        22,Grace,123-456-0022,22-09-2025,13:40,Special Tea,2,25,50,150,9,159
+        23,Heidi,123-456-0023,02-05-2025,23:47,Puffs,1,20,20,35.00,6.50,15
+        23,Heidi,123-456-0023,02-05-2025,23:47,Milk,1,15,15,35.00,6.50,15
+        23,Heidi,123-456-0023,02-05-2025,23:47,Puffs,1,20,20,35.00,6.50,60
+        23,Heidi,123-456-0023,02-05-2025,23:47,Milk,3,15,60,35.00,6.50,60
+        23,Heidi,123-456-0023,02-05-2025,23:56,Puffs,1,20,20,40.00,6.50,20
+        23,Heidi,123-456-0023,02-05-2025,23:56,Milk,3,15,60,40.00,6.50,20
+        23,Heidi,123-456-0023,02-05-2025,23:56,Coffee,2,20,60,40.00,6.50,20
+        23,Heidi,123-456-0023,02-05-2025,23:56,Samosa,1,20,20,40.00,6.50,20
+
+
+    Then, search label which have options to search for name number id.
+    when user searchs something there should be another dropdown called search results before Recent Bills section which is also editable bill sections showing two bills in a line
+
+
+
+    note: 
+        show two bill in a line doesn't mean i should not be responsive it should be responsive like for larger screens it can be 3 or 4 bills in a line for smaller 1-2..
+        use the same color pallete
+html:
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing System</title>
+
+    <link rel="stylesheet" type="text/css" href="/styles/pos.css">
+    <link rel="stylesheet" type="text/css" href="/styles/nav.css">
+    <link rel="stylesheet" type="text/css" href="/styles/dashboard.css">        
+    <link rel="stylesheet" type="text/css" href="/styles/pos_print.css">
+    <link rel="stylesheet" type="text/css" href="/styles/inventory.css">
+    <link rel="stylesheet" type="text/css" href="/styles/settings.css">
+
+</head>
+<body>
+        <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">Super Market
+            <div class="tagline">Fresh. Fast. Affordable</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a id="1" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="2" class="nav-link active" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    POS
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="3" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    Inventory
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="4" class="nav-link" onclick="csrit(this)">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div id="main" class="main-content">    <div class="container">
+        <div class="menu-section">
+            <h2>Menu Items</h2>
+            <div id="menu-container" class="menu-grid"><div class="search-container"><span class="search-icon">🔍</span><input type="text" id="menu-search" placeholder="Search menu items..." class="menu-search-input"></div>
+                
+                
+            <div class="menu-item" data-itemid="1">
+                          <h3>Tea<span title="Availability"></span></h3>
+                          <p>₹15</p>
+                      </div><div class="menu-item" data-itemid="2">
+                          <h3>Special Tea<span title="Availability"></span></h3>
+                          <p>₹25</p>
+                      </div><div class="menu-item" data-itemid="3">
+                          <h3>Black Tea<span title="Availability"></span></h3>
+                          <p>₹20</p>
+                      </div><div class="menu-item" data-itemid="4">
+                          <h3>Coffee<span title="Availability"></span></h3>
+                          <p>₹20</p>
+                      </div><div class="menu-item" data-itemid="5">
+                          <h3>Black Coffee<span title="Availability"></span></h3>
+                          <p>₹25</p>
+                      </div><div class="menu-item" data-itemid="6">
+                          <h3>Milk<span title="Availability"></span></h3>
+                          <p>₹15</p>
+                      </div><div class="menu-item" data-itemid="7">
+                          <h3>Samosa<span title="Availability">(46)</span></h3>
+                          <p>₹20</p>
+                      </div><div class="menu-item" data-itemid="8">
+                          <h3>Puffs<span title="Availability">(23)</span></h3>
+                          <p>₹20</p>
+                      </div></div>
+        </div>
+        
+        <div class="bill-section">
+            <div id="date-time" class="date-time"><div><span>Date: 11 May 2025</span><span> | </span><span>Time: 10:48 PM</span></div></div>
+            <div class="bill-header">
+                <h2><span class="print-hide">Current </span>Bill</h2>
+                <div class="ask-details-container print-hide">
+                    <input type="checkbox" id="askDetailsCheckbox" class="ask-details-checkbox">
+                    <label for="askDetailsCheckbox">Ask Customer Details</label>
+                </div>
+            </div>
+            
+            <div id="customer-details-container" class="customer-details-container" style="display: none;">
+                <div class="dropdown-header">
+                <span class="dropdown-title">Customer Details</span>
+                <span class="dropdown-icon">►</span>
+                </div>
+                <div class="dropdown-content" style="display: none;">
+                <div class="input-scroll-container">
+                    <div class="input-group">
+                    <label for="customerName">NAME:</label>
+                    <input type="text" id="customerName" class="customer-input" placeholder="Enter name">
+                    </div>
+                    <div class="input-group">
+                    <label for="customerPhone">PHONE:</label>
+                    <input type="tel" id="customerPhone" class="customer-input" placeholder="Enter number">
+                    </div>
+                </div>
+                </div>
+            </div>
+
+              <div class="table-wrap">
+  
+              <table class="bill-table">
+                  <thead>
+                      <tr>
+                          <th>Item</th>
+                          <th>Qty</th>
+                          <th>Price(₹)</th>
+                          <th>Offer(₹)</th>
+                          <th>Total(₹)</th>
+                          <th class="print-hide" style="width:40px; pointer-events: pointer;" onclick="clearbill()"><b>X</b></th> <!-- Compact column header -->
+
+                      </tr>
+                  </thead>
+                  <tbody id="billing"><tr>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                      <td>-</td>
+                                                  </tr></tbody>
+              </table>
+            </div>
+            
+            <div id="bill-summary" class="bill-summary">
+                <div class="bill-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">₹0.00</span>
+                </div>
+                <div class="bill-row">
+                    <span style="color: #4caf50;"><b>- You Saved </b>:</span>
+                    <span id="offer">₹9.90</span>
+                </div>
+                <div class="bill-row">
+                    <span style="color: #f44336;">+ Tax:</span>
+                    <span id="tax">₹0.00</span>
+                </div>
+                <div class="bill-row">
+                    <span>Total:</span>
+                    <span id="total">₹0.00</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-print" id="print">Print Bill</button>
+                <button class="btn btn-clear" id="clear">Clear</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <!-- window to ask clear conformation -->
+    <div class="modal-overlay" id="clearConfirmModal" style="display: none;">
+        <div class="modal-content">
+          <h3>Clear Bill</h3>
+          <p>Are you sure you want to clear the current bill?</p>
+          <div class="modal-buttons">
+            <button class="btn btn-cancel" id="cancelClear">No</button>
+            <button class="btn btn-confirm" id="confirmClear">Yes</button>
+          </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript" src="/scripts/pos.js"></script>
+    <script type="text/javascript" src="/scripts/inventory.js"></script>
+    <script type="text/javascript" src="/scripts/settings.js"></script>
+
+    <script type="text/javascript">
+        let ref_number=1;
+        document.addEventListener("keydown", function (e) {
+            // For Windows/Linux
+            if ((e.ctrlKey && e.key === 'r') || 
+                // For macOS
+                (e.metaKey && e.key === 'r')) {
+                if ( ref_number%2!==0){
+                    e.preventDefault();
+                    showToast("Refreshing the page will clear the bill. Please save the bill before refreshing and hit Ctrl+R again.",6000)
+                    ref_number+=1;
+                }
+            }
+          });
+          
+    </script>
+
+    <script type="text/javascript">
+        let to;
+        async function fetchData(to){
+            const first_serve={"1":true,"2":true,"3":true,"4":true};
+            let pos,dashboard,inventory,settings;
+
+            let content;
+            let func;
+            if (to==="1"){
+                if (first_serve[1]===true){
+                    content = await eel.serve("dashboard")()
+                    dashboard=content
+                } else {
+                    content=dashboard
+                }
+                    func=load_dashboard;
+            } else if(to==="2"){
+                if (first_serve[2]===true){
+                    content = await eel.serve("pos")()
+                    pos=content
+                } else {
+                    content=pos
+                }
+                func=globals_pos;
+            } else if(to==="3"){
+                if (first_serve[3]===true){
+                    content = await eel.serve("inventory")()
+                    inventory=content
+                } else {
+                    content=inventory
+                }
+                func=globals_inventory;
+
+            } else if(to==="4"){
+                if (first_serve[4]===true){
+                    content = await eel.serve("settings")()
+                    settings=content
+                } else {
+                    content=settings
+                }
+                func=settings_globals;
+            }
+            // console.log(content,func,times_visit[2])
+            return {content,func}
+        }
+        function main(ele){
+            to = ele.id
+            fetchData(to)
+            .then( ({content,func}) =>{
+                // console.log(content,"func\n",func)
+                document.getElementById("main").innerHTML=content
+                if (func)
+                    func(); 
+                document.querySelector('ul a.nav-link.active').classList.remove('active');
+                ele.classList.add("active");
+            });
+        }
+       function csrit(ele){
+        if (ask_save===true){
+            ask_save=false;
+            saving(true);
+
+            clearbtn.onclick=function(){
+
+                overlay.style.display="none";
+                // console.log(ele);
+                main(ele)            
+
+            }
+
+            cancelbtn.onclick=function(){
+                overlay.style.display="none";
+
+            }
+        } else{
+            main(ele)
+        }
+
+        
+       }
+       overlay = document.getElementById('clearConfirmModal');
+       cancelbtn = document.getElementById('cancelClear');
+       clearbtn = document.getElementById('confirmClear');
+
+       let ask_save=false;
+       let settings;
+       eel.getSettings()().then((data)=>{
+        settings=data;
+       const el=document.getElementById('2')
+       csrit(el);
+       })
+
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script type="text/javascript" src="/scripts/dashboard.js"></script>
+
+
+</body></html>
+
+css(pos.css):
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    padding: 4px;
+/*            overflow: clip;*/
+}
+
+.container {
+    display: flex;
+    max-width: 80vw;
+    margin: auto;
+    gap: 11px;
+    /*            padding-left: 10px;*/
+}
+
+header {
+    background-color: #5b3e29;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.tagline {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #e6ccb3;
+}
+
+.menu-section {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 37vw;
+    height:97vh;
+    overflow: auto;
+}
+
+.bill-section {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 97vh;
+}
+
+h2 {
+    color: #5b3e29;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e6ccb3;
+}
+
+.bill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e6ccb3;
+}
+
+.bill-header h2 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.ask-details-container {
+    padding-right: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.ask-details-checkbox {
+    margin-right: 5px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #5b3e29;
+}
+
+.ask-details-container label {
+    color: #8c6e5a;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.menu-item {
+    background-color: #f9f3ed;
+    border: 1px solid #e6ccb3;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: clamp(0.175rem, 1.4vw, 1.05rem);
+}
+
+.menu-item:hover {
+    background-color: #e6ccb3;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item h3 {
+    color: #5b3e29;
+    margin-bottom: 10px;
+}
+
+.menu-item p {
+    color: #8c6e5a;
+    font-weight: bold;
+}
+
+.menu-item-disabled {
+    text-decoration: line-through dotted; 
+    background-color: #f9f3ed;
+    border: 1px solid #e6ccb3;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.menu-item-disabled h3 {
+    color: #ac9584;
+    margin-bottom: 10px;
+}
+
+.menu-item-disabled p {
+    color: #c8aa96;
+    font-weight: bold;
+}
+
+.table-wrap {
+  height: 47vh;
+  overflow-y: scroll;
+}
+
+.table-wrap::-webkit-scrollbar {
+width: 5px;
+}
+
+.table-wrap::-webkit-scrollbar-track {
+background: #eee;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+background: #666;
+border-radius: 2.5px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb:hover {
+background: #444;
+}
+
+.table-wrap {
+scrollbar-width: thin;
+scrollbar-color: #666 #eee;
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    flex-grow: 1;
+
+}
+
+.bill-table th, .bill-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e6ccb3;
+}
+
+.bill-table th {
+    background-color: #f9f3ed;
+    color: #5b3e29;
+}
+
+.bill-table tr:last-child td {
+    border-bottom: none;
+}
+
+.bill-summary {
+    margin-top: auto;
+    background-color: #f9f3ed;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+
+}
+
+.bill-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.bill-row:last-child {
+    margin-bottom: 0;
+    padding-top: 10px;
+    border-top: 2px solid #e6ccb3;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-print {
+    background-color: #5b3e29;
+    color: white;
+}
+
+.btn-clear {
+    background-color: #e6ccb3;
+    color: #5b3e29;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.date-time {
+    text-align: right;
+    color: #8c6e5a;
+    margin-bottom: 15px;
+}
+
+.bill-empty {
+    text-align: center;
+    color: #8c6e5a;
+    font-style: italic;
+    padding: 40px 0;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        max-width: unset;
+        padding-left: unset;
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    .menu-section {
+        width:unset;
+        height: unset;
+    }
+    .menu-item{
+        font-size: unset;
+    }
+}
+
+
+/* overlay css clear confirm css */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+  }
+  
+  .modal-content h3 {
+    color: #5b3e29;
+    margin-bottom: 15px;
+  }
+  
+  .modal-content p {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .btn-cancel {
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .btn-confirm {
+    background-color: #d9534f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #d0d0d0;
+  }
+  
+  .btn-confirm:hover {
+    background-color: #c9302c;
+  }
+
+  
+@media (min-width: 979px){
+    .menu-section {
+        width: 55vw;
+    }
+  }
+
+/*del btn*/
+ /* Make Action column narrower */
+    .bill-table th:last-child, 
+    .bill-table td:last-child {
+        width: 40px;
+        padding: 8px 4px;
+        text-align: center;
+    }
+    
+    .delete-btn {
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        margin: 0 auto;
+    }
+    
+    .delete-btn:hover {
+        background-color: #e74c3c;
+        transform: scale(1.1);
+    }
+    
+    /* Confirmation Modal CSS */
+    .delete-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .delete-modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        max-width: 350px;
+        width: 90%;
+        text-align: center;
+    }
+    
+    .delete-modal-content h3 {
+        color: #5b3e29;
+        margin-bottom: 15px;
+    }
+    
+    .delete-modal-content p {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .delete-modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .btn-delete-cancel {
+        background-color: #e0e0e0;
+        color: #333;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .btn-delete-confirm {
+        background-color: #ff6b6b;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .btn-delete-cancel:hover {
+        background-color: #d0d0d0;
+    }
+    
+    .btn-delete-confirm:hover {
+        background-color: #e74c3c;
+    }
+/* Search Container Styles */
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: #f9f3ed;
+  border: 1px solid #e6ccb3;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 15px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  grid-column: 1 / -1; /* Make search span all columns in grid */
+}
+
+.menu-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  padding: 8px;
+  outline: none;
+  color: #5b3e29;
+}
+
+.menu-search-input::placeholder {
+  color: #8c6e5a;
+}
+
+.search-icon {
+  margin-right: 8px;
+  color: #5b3e29;
+  font-size: 18px;
+}
+
+/* Focus state for the search container */
+.search-container:focus-within {
+  background-color: #e6ccb3;
+  box-shadow: 0 0 0 2px #5b3e29;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-container {
+    padding: 6px 10px;
+  }
+  
+  .menu-search-input {
+    font-size: 14px;
+  }
+}
+
+
+.customer-details-container {
+    background-color: #f9f3ed;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    border: 1px solid #e6ccb3;
+    animation: fadeIn 0.3s ease;
+    overflow: hidden;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(-1); }
+}
+
+.dropdown-header {
+    background-color: #e6ccb3;
+    padding: 6px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dropdown-header:hover {
+    background-color: #d9b99d;
+}
+
+.dropdown-title {
+    color: #5b3e29;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.dropdown-icon {
+    color: #5b3e29;
+    font-size: 12px;
+    transition: transform 0.3s;
+}
+
+.dropdown-content {
+    padding: 6px 15px;
+}
+
+.input-scroll-container {
+    display: flex;
+    justify-content: space-around;
+    overflow-x: auto;
+    padding-bottom: 17px;
+}
+
+/* Scrollbar styling */
+.input-scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.input-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.input-scroll-container::-webkit-scrollbar-thumb {
+    background: #e6ccb3;
+    border-radius: 10px;
+}
+
+.input-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #d9b99d;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+.input-group label {
+    color: #5b3e29;
+    margin-right: 8px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.customer-input {
+    padding: 8px 10px;
+    border: 1px solid #e6ccb3;
+    border-radius: 5px;
+    background-color: white;
+    color: #333;
+    transition: border-color 0.3s;
+    width: 150px;
+}
+
+.customer-input:focus {
+    outline: none;
+    border-color: #5b3e29;
+    box-shadow: 0 0 0 2px rgba(91, 62, 41, 0.2);
+}
+
+.customer-input::placeholder {
+    color: #bbb;
+}
+    
+
+
+/*          testing*/
+
+
+css2(nav.css):(also in that same page)
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary: #5b3e29;
+    --primary-light: #8c6e5a;
+    --accent: #e6ccb3;
+    --accent-light: #f9f3ed;
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray: #e0e0e0;
+    --dark: #333333;
+    --warning: #f39c12;
+    --danger: #d9534f;
+    --success: #4caf50;
+}
+
+:root{
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--gray-light);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 99vh;
+    position: sticky;
+    top: 4px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--white);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.nav-menu {
+    list-style: none;
+    margin-bottom: auto;
+}
+
+.nav-item {
+    margin-bottom: 8px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: var(--accent);
+    color: var(--primary);
+}
+
+.icon {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 768px) {
+    :root{
+        overflow-y: auto;
+    }
+    body {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: 10px;
+        height: unset;
+        position: unset;
+        top: unset;
+    }
+    
+    .logo {
+        margin-bottom: 15px;
+    }
+    
+    .nav-menu {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .nav-item {
+        margin-bottom: 0;
+        margin-right: 5px;
+    }
+    
+    .nav-link {
+        padding: 8px 12px;
+    }
+}
+
+
+css3(print.css):
+@media print{
+  body {
+      flex-direction: column;
+  }
+  
+  .sidebar {
+      width: 100%;
+      padding: 10px;
+  }
+  
+  .logo {
+      margin-bottom: 15px;
+  }
+
+  /* Element | http://localhost:8000/index.html */
+
+  .menu-section {
+    display: none;
+  }
+
+  /* Element | http://localhost:8000/index.html */
+
+  .table-wrap {
+    overflow: unset;
+    height: unset;
+  }
+
+  /* Element | http://localhost:8000/index.html */
+
+  body {
+    overflow: unset;
+  }
+
+  /* Element | http://localhost:8000/index.html */
+
+  .action-buttons {
+    display: none;
+  }
+
+  /* Element | http://localhost:8000/index.html */
+
+  #bill-summary {
+    box-shadow: 0 0 0;
+  }
+
+  .nav-menu{
+    display: none !important;
+  }
+
+  .logo{
+    color:var(--primary);
+  }
+
+  .bill-section{
+    height: unset;
+  }
+  .btn-print{
+    display: none;
+  }
+
+  .print-hide{
+    display:none;
+  }
+
+  #date-time {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* aligns spans to the right */
+    width: 20vw;
+    margin-left: auto; /* pushes container to the right */
+  }
+
+  #date-time span:nth-child(2){
+    display: none;
+  }
+  #date-time span {
+    display: block;
+    width: fit-content;
+  }
+
+  #date-time div{
+    position: absolute;
+  }
+
+
+}

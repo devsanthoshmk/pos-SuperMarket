@@ -413,6 +413,8 @@ function callback_ask_details() {
 
   let total_offer=0;
 
+  let name,phone;
+
   async function globals_pos() {
       console.time("avil");
       taxamt = settings.base_tax;

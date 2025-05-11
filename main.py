@@ -90,7 +90,6 @@ def addSales(data):
     try:
         write_header = not os.path.exists(file_path) or os.path.getsize(file_path) == 0
         with open(file_path, mode="a", encoding="utf-8", newline="") as file:
-            fieldnames = data[0].keys()
             fieldnames = [
                 "id",
                 "date",
@@ -102,6 +101,8 @@ def addSales(data):
                 "subtotal",
                 "tax",
                 "grandtotal",
+                "name",
+                "phone",
             ]
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             if write_header:

@@ -1,0 +1,68 @@
+<div class="bills-container">
+    <div class="bills-header">
+        <h2>Bills</h2>
+        <button id="saveAllBtn" class="save-all-btn">Save All</button>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="billSearch" class="search-input" placeholder="Search bills...">
+        </div>
+        <div class="search-options">
+            <div class="search-option">
+                <input type="radio" id="searchByName" name="searchOption" value="name" checked>
+                <label for="searchByName">Search by Name</label>
+            </div>
+            <div class="search-option">
+                <input type="radio" id="searchByPhone" name="searchOption" value="phone">
+                <label for="searchByPhone">Search by Phone</label>
+            </div>
+            <div class="search-option">
+                <input type="radio" id="searchById" name="searchOption" value="id">
+                <label for="searchById">Search by Bill ID</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results Section (Initially Hidden) -->
+    <div id="searchResultsSection" class="dropdown-section" style="display: none;">
+        <div class="dropdown-header" id="searchResultsHeader">
+            <div class="dropdown-title">Search Results</div>
+            <span class="dropdown-icon">►</span>
+        </div>
+        <div class="dropdown-content" id="searchResultsContent">
+            <div id="searchResultsGrid" class="bills-grid">
+                <!-- Search results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bills Section -->
+    <div class="dropdown-section">
+        <div class="dropdown-header" id="recentBillsHeader">
+            <div class="dropdown-title">
+                Recent Bills
+                <div class="sort-options" onclick="event.stopPropagation()">
+                    <span class="sort-text">Sort by:</span>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="date">Date</option>
+                        <option value="id">ID 
+                        </option>
+                        <option value="total">Total Price</option>
+                    </select>
+                    <span class="info-icon" id="sortInfoIcon">i
+                        <span class="tooltip">Sort bills by date, ID number, or total price</span>
+                    </span>
+                </div>
+            </div>
+            <span class="dropdown-icon">►</span>
+        </div>
+        <div class="dropdown-content" id="recentBillsContent"  style="display: none;">
+            <div id="recentBillsGrid" class="bills-grid">
+                <!-- Recent bills will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>

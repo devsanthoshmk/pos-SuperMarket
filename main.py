@@ -204,6 +204,7 @@ def setSettings(settings):
 
 eel.start(
     "index.html",
+    mode="defult",
     cmdline_args=[
         "--start-maximized",
         "--disable-infobars",

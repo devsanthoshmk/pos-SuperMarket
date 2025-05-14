@@ -6,7 +6,7 @@ permissions:
 
 on:
   push:
-    branches: [ tea-shop ]
+    branches: [ release ]
 
 env:
   RELEASE_VERSION: v1.0.${{ github.run_number }}

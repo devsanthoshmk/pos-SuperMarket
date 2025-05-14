@@ -28,6 +28,31 @@ function groupBills(flat) {
     return Object.values(map);
 }
 
+function flattenBills(nestedBills) {
+  const flat = [];
+
+  nestedBills.forEach(bill => {
+    bill.items.forEach(item => {
+      flat.push({
+        id: bill.id,
+        date: bill.date,
+        time: bill.time,
+        item: item.name,
+        quantity: item.quantity.toString(),
+        price: item.price.toString(),
+        total: item.total.toString(),
+        subtotal: bill.subtotal.toString(),
+        tax: bill.tax.toString(),
+        grandtotal: bill.grandtotal.toString(),
+        name: bill.name,
+        phone: bill.phone
+      });
+    });
+  });
+
+  return flat;
+}
+
 // Function to toggle dropdown sections
 function toggleDropdown(header, content) {
     const icon = header.querySelector('.dropdown-icon');
@@ -41,6 +66,34 @@ function toggleDropdown(header, content) {
         icon.textContent = '▼';
         icon.classList.add('open');
     }
+}
+
+// Replace a single bill‐card in the DOM with an updated one.
+function reRenderBillCard(billId) {
+  console.log(billId);
+  const bill = billsData.find(b => b.id === billId);
+  if (!bill) return;
+  const oldCard = document.querySelector(`.bill-card[data-bill-id="${billId}"]`);
+  const newCard = createBillCard(bill);
+  oldCard.replaceWith(newCard);
+}
+
+// helper: append a new item to a bill and refresh its card
+function addItemToBill(billId, item) {
+  const bill = billsData.find(b => b.id === billId);
+  if (!bill) return;
+  // push with parsed numbers
+  bill.items.push({
+    name: item.name,
+    quantity: 1,
+    price: parseFloat(item.price),
+    total: parseFloat(item.price)
+  });
+  // recalc totals
+  bill.subtotal = bill.items.reduce((sum, i) => sum + i.total, 0);
+  bill.grandtotal = parseFloat((bill.subtotal + bill.tax).toFixed(2));
+  // re‐render everything (or just that one card if you prefer)
+  reRenderBillCard(bill.id);
 }
 
 // Function to create a bill card
@@ -114,18 +167,43 @@ function createBillCard(bill) {
     const actions = document.createElement('div');
     actions.className = 'bill-actions';
 
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'save-btn';
-    saveBtn.textContent = 'Save';
-    saveBtn.addEventListener('click', () => saveBill(bill.id));
-
-    actions.appendChild(saveBtn);
-
     card.appendChild(header);
     card.appendChild(customer);
     card.appendChild(itemsContainer);
     card.appendChild(summary);
     card.appendChild(actions);
+
+      // ── ADD-ITEM DROPDOWN ──
+    const addContainer = document.createElement('div');
+    addContainer.className = 'add-item-container';
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-item-btn';
+    addBtn.textContent = 'Add Item ▼';
+
+    // build the list
+    const dropdown = document.createElement('ul');
+    dropdown.className = 'item-dropdown';
+    items.forEach(it => {
+      const li = document.createElement('li');
+      li.textContent = `${it.name} — ₹${it.price}`;
+      li.addEventListener('click', e => {
+        e.stopPropagation();
+        dropdown.classList.remove('open');
+        addItemToBill(bill.id, it);
+      });
+      dropdown.appendChild(li);
+    });
+
+    // toggle open/close
+    addBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      dropdown.classList.toggle('open');
+    });
+
+    addContainer.append(addBtn, dropdown);
+    actions.appendChild(addContainer);
+
 
     // Add event listeners for input changes
     const inputs = card.querySelectorAll('input');
@@ -135,11 +213,19 @@ function createBillCard(bill) {
         });
     });
 
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'download-btn';
+    dlBtn.textContent = 'Print';
+    dlBtn.style.marginLeft = '8px';
+    dlBtn.addEventListener('click', () => printIt(bill));
+    card.querySelector('.bill-actions').appendChild(dlBtn);
+
+    recentBillsGrid.appendChild(card);
+
     return card;
 }
 
 // Function to update bill data when inputs change
-// Replace your current updateBillData with this:
 function updateBillData(billId, field, value) {
   const bill = billsData.find(b => b.id === billId);
   if (!bill) return;
@@ -157,12 +243,22 @@ function updateBillData(billId, field, value) {
         ? parseFloat(value)
         : value;
 
-    // Update item
-    bill.items[index][propName] = typedValue;
+    // if someone manually sets quantity to 0, drop that item:
+    if (propName === 'quantity' && typedValue === 0) {
+      bill.items.splice(index, 1);
+      reRenderBillCard(billId);
+      return
+      // no need to recalc that one row
+    } else {
+      // original logic: update name/price/quantity
 
-    // Recalculate row total if qty/price changed
-    if (propName === 'quantity' || propName === 'price') {
-      bill.items[index].total = bill.items[index].quantity * bill.items[index].price;
+      // Update item
+      bill.items[index][propName] = typedValue;
+
+      // Recalculate row total if qty/price changed
+      if (propName === 'quantity' || propName === 'price') {
+        bill.items[index].total = bill.items[index].quantity * bill.items[index].price;
+      }
     }
 
     // 2) Recompute subtotal & grandtotal
@@ -173,7 +269,7 @@ function updateBillData(billId, field, value) {
     const card = document.querySelector(`.bill-card[data-bill-id="${billId}"]`);
     // Update item's Total cell
     const row = card.querySelector(`input[data-field="${field}"]`).closest('tr');
-    row.querySelector('td:last-child').textContent = `₹${bill.items[index].total.toFixed(2)}`;
+    row.querySelector('td:last-child').textContent = `₹${bill.items[index].total.toFixed(2) || 0}`;
     // Update summary lines
     const summary = card.querySelector('.bill-summary');
     summary.innerHTML = `
@@ -199,11 +295,16 @@ function updateBillData(billId, field, value) {
               .value = value;
     }
     if (field === 'phone') {
+      if ((parseInt(value,10)+"").length !== 10) {
+        alert('Phone must contain only numbers without +91.');
+      }
       bill.phone = value;
       document.querySelector(`.bill-card[data-bill-id="${billId}"] .customer-phone`)
               .value = value;
     }
   }
+
+  ask_save=true;
 }
 
 
@@ -218,32 +319,80 @@ function saveBill(billId) {
 
 // --- SAVE ALL BILLS ---
 function saveAllBills() {
-  // TODO: replace with batch-save API
-  console.log('Saving all bills', billsData);
-  alert('All bills saved.');
+  sales = flattenBills(billsData); //sales===flatBills
+  eel.setSales(sales);
+  ask_save=false;
 }
 
-// --- DOWNLOAD A BILL ---
-function downloadBill(billId, format = 'pdf') {
-  const bill = billsData.find(b => b.id === billId);
-  if (!bill) return;
-  // Simple CSV fallback; swap in your PDF generator if needed
-  if (format === 'csv') {
-    const rows = [
-      ['Item','Qty','Price','Total'],
-      ...bill.items.map(i => [i.name, i.quantity, i.price, i.total])
-    ];
-    let csv = rows.map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `bill_${billId}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-  // PDF branch could go here…
+function immidDateTime(ele){
+      const now = new Date();
+
+      // Options for date
+      const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+      // e.g. "01 May 2025"
+      const formattedDate = now
+        .toLocaleDateString('en-GB', dateOptions)
+        .replace(',', '');
+
+      // Options for time
+      const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: true };
+      // e.g. "12:39 AM"
+      const formattedTime = now.toLocaleTimeString('en-US', timeOptions);
+
+      ele.innerHTML = `<div><span>Date: ${formattedDate}</span><span> | </span><span>Time: ${formattedTime}</span></div>`;
+
+      // Schedule next update right at the top of the next second
+      const secLeft = 60 -  now.getSeconds();
+      const msleft = secLeft * 1000 - now.getMilliseconds();
 }
+
+function populateBill(bill) {
+  // 1) Header
+  document.getElementById('pos-bill-id').textContent = bill.id;
+
+  // 3) Billing rows
+  const tbody = document.getElementById('billing');
+  tbody.innerHTML = '';  // clear existing
+
+  bill.items.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>${item.price.toFixed(2)}</td>
+      <td>${item.offer?item.offer.toFixed(2):"-"}</td>
+      <td>${item.total.toFixed(2)}</td>
+      <td class="print-hide"></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // 4) Summary
+  document.getElementById('subtotal').textContent   = bill.subtotal.toFixed(2);
+  document.getElementById('offer').textContent      = bill.tot_offer?bill.tot_offer.toFixed(2):'-';                // no offers
+  document.getElementById('tax').textContent        = bill.tax.toFixed(2);
+  document.getElementById('total').textContent      = bill.grandtotal.toFixed(2);
+
+  const name_cont= document.querySelector('#purchasor-name');
+  const name_ptag=name_cont.querySelector("#pos-put-name");
+  if (bill.name && bill.phone){
+    name_cont.style.display="unset";
+    name_ptag.textContent=bill.name;
+  } else {
+    name_cont.style.display="none";
+  }
+}
+
+
+// --- print A BILL ---
+function printIt(billId){
+    immidDateTime(document.getElementById('date-time'));
+    populateBill(billId);
+    window.print();
+
+
+}
+
 
 // --- SEARCH BILLS ---
 function filterBills(query, field) {
@@ -265,18 +414,14 @@ function performSearch() {
   searchResultsGrid.innerHTML = '';
   results.forEach(bill => {
     const card = createBillCard(bill);
-    // change the Save button in search to also say “Download”
-    const dl = document.createElement('button');
-    dl.className = 'save-btn';
-    dl.textContent = 'Download';
-    dl.style.marginLeft = '8px';
-    dl.addEventListener('click', () => downloadBill(bill.id, 'csv'));
-    card.querySelector('.bill-actions').appendChild(dl);
     searchResultsGrid.appendChild(card);
   });
   searchResultsSection.style.display = 'block';
   // auto-open the dropdown
-  toggleDropdown(searchResultsHeader, searchResultsContent);
+  const icon = searchResultsHeader.querySelector('.dropdown-icon');
+  searchResultsContent.style.display = 'block';
+  icon.textContent = '▼';
+  icon.classList.add('open');
 }
 
 // --- INITIAL RENDER OF RECENT BILLS ---
@@ -284,16 +429,6 @@ function renderRecentBills() {
   recentBillsGrid.innerHTML = '';
   billsData.forEach(bill => {
     const card = createBillCard(bill);
-
-    // add Download button (CSV)
-    const dlBtn = document.createElement('button');
-    dlBtn.className = 'download-btn';
-    dlBtn.textContent = 'Print';
-    dlBtn.style.marginLeft = '8px';
-    dlBtn.addEventListener('click', () => downloadBill(bill.id, 'csv'));
-    card.querySelector('.bill-actions').appendChild(dlBtn);
-
-    recentBillsGrid.appendChild(card);
   });
 }
 
@@ -333,12 +468,12 @@ searchResultsHeader,
 searchResultsContent,
 searchResultsGrid,
 billSearch,
-sortSelect,
+// sortSelect,
 saveAllBtn;
 
 function bills_globals(){
 
-  flatBills = structuredClone(sales);
+  flatBills = sales;
 
   // 3) Replace billsData with the grouped version
   billsData = groupBills(flatBills);
@@ -352,7 +487,7 @@ function bills_globals(){
   searchResultsContent = document.getElementById('searchResultsContent');
   searchResultsGrid = document.getElementById('searchResultsGrid');
   billSearch = document.getElementById('billSearch');
-  sortSelect = document.getElementById('sortSelect');
+  // sortSelect = document.getElementById('sortSelect');
   saveAllBtn = document.getElementById('saveAllBtn');
 
   // Add event listeners for dropdowns

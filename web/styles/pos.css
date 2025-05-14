@@ -1,4 +1,3 @@
-
 * {
     margin: 0;
     padding: 0;
@@ -10,6 +9,10 @@ body {
     background-color: #f5f5f5;
     padding: 4px;
 /*            overflow: clip;*/
+}
+
+.unhide-on-print {
+    display: none;
 }
 
 .container {
@@ -538,7 +541,7 @@ scrollbar-color: #666 #eee;
     to { opacity: 1; transform: translateY(-1); }
 }
 
-.dropdown-header {
+.dropdown-header-pos {
     background-color: #e6ccb3;
     padding: 6px 15px;
     display: flex;
@@ -564,7 +567,7 @@ scrollbar-color: #666 #eee;
     transition: transform 0.3s;
 }
 
-.dropdown-content {
+.dropdown-content-pos {
     padding: 6px 15px;
 }
 

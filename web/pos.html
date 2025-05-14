@@ -10,19 +10,19 @@
         <div class="bill-section">
             <div id="date-time" class="date-time">Loading...</div>
             <div class="bill-header">
-                <h2><span class="print-hide">Current </span>Bill</h2>
+                <h2>Bill <span id="pos-bill-id"></span></h2>
                 <div class="ask-details-container print-hide">
                     <input type="checkbox" id="askDetailsCheckbox" class="ask-details-checkbox">
                     <label for="askDetailsCheckbox">Ask Customer Details</label>
                 </div>
             </div>
             
-            <div id="customer-details-container" class="customer-details-container" style="display: none;">
-                <div class="dropdown-header">
-                <span class="dropdown-title">Customer Details</span>
-                <span class="dropdown-icon">►</span>
+            <div id="customer-details-container" class="customer-details-container print-hide" style="display: none;">
+                <div class="dropdown-header-pos">
+                    <span class="dropdown-title">Customer Details</span>
+                    <span class="dropdown-icon">►</span>
                 </div>
-                <div class="dropdown-content" style="display: none;">
+                <div class="dropdown-content-pos print-hide" style="display: none;">
                 <div class="input-scroll-container">
                     <div class="input-group">
                     <label for="customerName">NAME:</label>
@@ -93,6 +93,11 @@
                     <span>Total:</span>
                     <span id='total'>-</span>
                 </div>
+            </div>
+
+            <div id="purchasor-name" class="unhide-on-print">
+                <h3>Purchased By,</h3>
+                <p id="pos-put-name"></p>
             </div>
             
             <div class="action-buttons">

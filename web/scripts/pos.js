@@ -199,7 +199,7 @@ function updateDateTime(from) {
 function printHandle(){
   if (tot > 1) {
 
-        if (askDetailsCheckbox.checked===true && !(name.length>=0 && phone.length===10)){
+        if ((askDetailsCheckbox.checked===true) && ((!name && !phone) || (!(name.length>=0 && phone.length===10)))){
           showToast("Add costomer details or uncheck 'Ask Customer Details' to update bill without costomer deatils.",8000,true)
           return
         }
@@ -282,7 +282,6 @@ function printHandle(){
       isFirst=true;
       tot=0;
       sale=[];
-      salesid+=1;
       ask_save=false;
       hideconf();
       
@@ -325,8 +324,8 @@ function askDetails(resolve){
 
 
 function customer_detail_menu() {
-  const header = costumer_container.querySelector('.dropdown-header');
-  const content = costumer_container.querySelector('.dropdown-content');
+  const header = costumer_container.querySelector('.dropdown-header-pos');
+  const content = costumer_container.querySelector('.dropdown-content-pos');
   const icon = costumer_container.querySelector('.dropdown-icon');
   const nameInput = costumer_container.querySelector('#customerName');
   const phoneInput = costumer_container.querySelector('#customerPhone');
@@ -353,6 +352,8 @@ function customer_detail_menu() {
     } else {
       console.log('Name:', el.target.value);
       name = el.target.value
+      document.getElementById("pos-put-name").textContent=name;
+
     }
   });
   phoneInput.addEventListener('blur',  (el)=>{
@@ -366,16 +367,20 @@ function customer_detail_menu() {
 
   // initialize visibility on load
   costumer_container.style.display = askDetailsCheckbox.checked ? 'block' : 'none';
+
 }
 
 
 function callback_ask_details() {
   if (askDetailsCheckbox.checked) {
       customer_detail_menu();
+      document.getElementById("purchasor-name").style.display='';
+
       // Code to show customer details form or modal
       console.log('Ask details checkbox checked - add your functionality here');
       // You can trigger a modal or expand a form section here
   } else {
+      document.getElementById("purchasor-name").style.display='none';
       costumer_container.style.display = 'none'; // Hide the customer details form or modal
       // Code to hide customer details form or modal
       console.log('Ask details checkbox unchecked');
@@ -403,7 +408,6 @@ function callback_ask_details() {
   let clearbtn;
 
   let sales; 
-  let salesid;
 
   let first=true;
 
@@ -424,13 +428,15 @@ function callback_ask_details() {
         sales = await eel.getSales()();
         first=false;
       }
-      salesid=sales.at(-1).id;
+      // sales.at(-1).id;
       // console.log(sales.at(-1).id);
       // console.log(items);
       renderMenu();
 
       // Call this function after renderMenu() in your existing code
       addSearchFunctionality();
+
+      document.getElementById('pos-bill-id').innerHTML=`#${sales.at(-1).id-0+1}`;
 
       costumer_container = document.querySelector('#customer-details-container');
 

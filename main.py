@@ -7,6 +7,7 @@ import subprocess
 import io
 import builtins
 import sys
+import random
 
 # keep reference to the real open
 _original_open = builtins.open
@@ -86,10 +87,11 @@ def getSales():
 
 @eel.expose
 def addSales(data):
-    file_path = "data/sales.csv"
     try:
-        write_header = not os.path.exists(file_path) or os.path.getsize(file_path) == 0
-        with open(file_path, mode="a", encoding="utf-8", newline="") as file:
+        write_header = (
+            not os.path.exists(sales_path) or os.path.getsize(sales_path) == 0
+        )
+        with open(sales_path, mode="a", encoding="utf-8", newline="") as file:
             fieldnames = [
                 "id",
                 "date",
@@ -112,6 +114,16 @@ def addSales(data):
     except Exception as e:
         print(f"Error writing to file: {e}")
         return f"Error writing to file: {e}"
+
+
+@eel.expose
+def setSales(sales):
+    with open(sales_path, "w", newline="") as f:
+        fieldnames = sales[0].keys()  # or specify manually
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+        writer.writeheader()
+        writer.writerows(sales)
 
 
 @eel.expose
@@ -202,9 +214,10 @@ def setSettings(settings):
         json.dump(settings, file)
 
 
+port = random.randint(1000, 9999)
 eel.start(
     "index.html",
-    mode="defult",
+    port=port,
     cmdline_args=[
         "--start-maximized",
         "--disable-infobars",

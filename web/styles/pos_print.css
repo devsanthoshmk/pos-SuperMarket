@@ -1,4 +1,9 @@
 @media print{
+  .unhide-on-print{
+    display: unset;
+
+  }
+
   body {
       flex-direction: column;
   }
@@ -52,6 +57,7 @@
   }
 
   .bill-section{
+    display: flex !important;
     height: unset;
   }
   .btn-print{
@@ -60,6 +66,8 @@
 
   .print-hide{
     display:none;
+    opacity: 0;
+    position: absolute;
   }
 
   #date-time {

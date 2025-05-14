@@ -1,0 +1,64 @@
+name: Build Installer
+
+permissions:
+  contents: write     # allow creating/updating releases and uploading assets
+
+
+on:
+  push:
+    branches: [ tea-shop ]
+
+env:
+  RELEASE_VERSION: v1.0.${{ github.run_number }}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+          pip install pillow
+
+      - name: Build EXE with PyInstaller
+        run: |
+          python -m eel main.py web --add-data "data;data" --onefile --noconsole --icon=bill.png
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --yes
+
+      - name: Run Inno Setup Compiler
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" Setup.iss
+
+      - name: Renaming files
+        run: |
+          copy dist\main.exe ChaiTime-BSPostable.exe
+          copy Output\*.exe ChaiTime-BSSetup.exe
+
+      - name: Create Release & Upload Assets
+        uses: ncipollo/release-action@v1.16.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.RELEASE_VERSION }}
+          name: Release ${{ env.RELEASE_VERSION }}
+          body: |
+            Release of version ${{ env.RELEASE_VERSION }} portable and setup
+          draft: false
+          prerelease: false
+          artifacts: |
+            ChaiTime-BSPostable.exe
+            ChaiTime-BSSetup.exe
+          allowUpdates: true

@@ -28,7 +28,7 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 
 [Files]
 ; Main executable from your PyInstaller dist
-Source: "dist\Billing-Software.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\main.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; Any other files/folders you need
 Source: "bill.png";   DestDir: "{app}"; Flags: ignoreversion
 Source: "web\*";      DestDir: "{app}\web";  Flags: recursesubdirs createallsubdirs

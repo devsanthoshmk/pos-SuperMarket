@@ -1,3 +1,4 @@
+// to add offer elim add , "offer_on_items": false in settings; todo
 let del_prev;
 let file;
 
@@ -17,6 +18,20 @@ function getfile(){
 }
 
 function settings_globals(){
+
+  // Toggle askDetails on items
+  const askDetailsToggle = document.getElementById('ask-details');
+  askDetailsToggle.checked=settings.ask_customer_details;
+  askDetailsToggle.addEventListener('change', function() {
+    settings.ask_customer_details=askDetailsToggle.checked;
+  });
+
+  // // Toggle offer on items
+  // const offerItemsToggle = document.getElementById('item-offer');
+  // offerItemsToggle.checked=settings.offer_on_items;
+  // offerItemsToggle.addEventListener('change', function() {
+  //   settings.offer_on_items=offerItemsToggle.checked;
+  // });
 
   // Base tax input handling
   const baseTaxInput = document.getElementById('base-tax');

@@ -58,6 +58,34 @@ function renderInventory() {
         priceEditable.dataset.field = 'price';
         priceEditable.addEventListener('blur', updateInventoryItem);
         priceCell.appendChild(priceEditable);
+
+        // offer cell
+        let offerCell;
+        // if (settings.offer_on_items===true){
+            offerCell = document.createElement('td');
+            const offerEditable = document.createElement('div');
+            offerEditable.className = 'editable';
+            offerEditable.contentEditable = true;
+            offerEditable.textContent = item.offer || 0;
+            offerEditable.dataset.index = index;
+            offerEditable.dataset.field = 'offer';
+            offerEditable.addEventListener('blur', updateInventoryItem);
+            offerCell.appendChild(offerEditable);
+        // }
+
+        // tax cell
+        let taxCell;
+        if (settings.tax_on_every===true){
+            taxCell = document.createElement('td');
+            const taxEditable = document.createElement('div');
+            taxEditable.className = 'editable';
+            taxEditable.contentEditable = true;
+            taxEditable.textContent = item.tax || 0;
+            taxEditable.dataset.index = index;
+            taxEditable.dataset.field = 'tax';
+            taxEditable.addEventListener('blur', updateInventoryItem);
+            taxCell.appendChild(taxEditable);
+        }
         
         // Actions cell
         const actionsCell = document.createElement('td');
@@ -75,6 +103,8 @@ function renderInventory() {
         row.appendChild(nameCell);
         row.appendChild(availabilityCell);
         row.appendChild(priceCell);
+        row.appendChild(offerCell);
+        if(settings.tax_on_every===true) row.appendChild(taxCell);
         row.appendChild(actionsCell);
         
         // Append row to table
@@ -91,6 +121,17 @@ function updateInventoryItem(event) {
     
     // Update the data
     inventoryData[index][field] = field === 'price' ? parseFloat(value) || 0 : value;
+
+    // availability
+    if(field==='availability'){
+        const avail = inventoryData[index][field];
+        if (!isNumber(avail) && avail.toLowerCase()!=="yes" && avail.toLowerCase()!=="no"){
+            event.target.textContent = 'CHANGE HERE'
+            inventoryData[index][field] = 'no';
+            showToast("Availability can only contains 'yes', 'no' or number of items available",3000,true);
+
+        }
+    }
     
     if (to_edit[index]===true && inventoryData[index]['name']!=="Tap to edit" && inventoryData[index]['price']!==0){
         to_edit[index]===false;
@@ -116,11 +157,20 @@ function deleteInventoryItem(event) {
 // Add new inventory item
 function addInventoryItem() {
     // Add new blank item
-    inventoryData.push({
-        name: "Tap to edit",
-        availability: "yes",
-        price: 0
-    });
+    if(settings.tax_on_every){
+        inventoryData.push({
+            name: "Tap to edit",
+            availability: "yes",
+            price: 0,
+            tax:0
+        });
+    } else{
+        inventoryData.push({
+            name: "Tap to edit",
+            availability: "yes",
+            price: 0
+        });
+    }
 
     to_edit[inventoryData.length-1]=true;
 
@@ -184,6 +234,13 @@ const to_edit={}; //used to check is there are any empty row created
 
 
 function globals_inventory(){
+
+    if (settings.tax_on_every===true){
+        document.getElementById('tax-on-item').style.display='table-cell'
+    }
+    // if (settings.offer_on_items===true){
+    //     document.getElementById('offer-on-items').style.display='table-cell'
+    // }
 
     // Initialize inventory data
     inventoryData = structuredClone(items); 

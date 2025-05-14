@@ -1,9 +1,9 @@
-name,availability,price,offer
-Tea,yes,15,1.65
-Special Tea,yes,25,1.65
-Black Tea,yes,20,1.65
-Coffee,yes,20,1.65
-Black Coffee,yes,25,1.65
-Milk,yes,15,1.65
-Samosa,46,20,1.65
-Puffs,23,20,1.65
+name,availability,price,offer,tax
+Tea,yes,15,0.5,10
+Special Tea,yes,25,1.65,
+Black Tea,yes,20,1.65,
+Coffee,yes,20,1.65,
+Black Coffee,yes,25,1.65,
+Milk,yes,15,1.65,
+Samosa,46,20,1.65,
+Puffs,23,20,1.65,

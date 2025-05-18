@@ -9,7 +9,7 @@
 AppName=Billing Software
 AppVersion=1.0
 ; Default installation folder (Program Files)
-DefaultDirName={autopf}\Billing Software
+DefaultDirName={autopf}\main
 ; Start Menu folder name
 DefaultGroupName=Billing Software
 ; Output installer name (without extension)
@@ -38,8 +38,8 @@ Source: "data\*";     DestDir: "{app}\data"; Flags: recursesubdirs createallsubd
 ; Start Menu icon
 Name: "{group}\Billing Software"; Filename: "{app}\Billing-Software.exe"; WorkingDir: "{app}"
 ; Desktop icon (if task selected)
-Name: "{commondesktop}\Billing Software"; Filename: "{app}\Billing-Software.exe"; Tasks: desktopicon
+Name: "{commondesktop}\Billing Software"; Filename: "{app}\main.exe"; Tasks: desktopicon
 
 [Run]
 ; Post-install “Launch Billing Software” checkbox
-Filename: "{app}\Billing-Software.exe"
+Filename: "{app}\main.exe"

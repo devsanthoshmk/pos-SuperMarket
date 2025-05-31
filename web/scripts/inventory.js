@@ -202,6 +202,7 @@ function confirmSave(){
         overlay.style.display = 'none';
         clearbtn.removeEventListener('click',cancelit)
     }
+    ask_save=false;
 }
 
 //asking wheather they are confirm to save?
